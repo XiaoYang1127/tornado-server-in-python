@@ -4,7 +4,7 @@
 import httpserver.http_client as http_client
 
 
-URL = "http://localhost:8080"
+URL = "http://localhost:5088"
 
 
 def do_test_http():

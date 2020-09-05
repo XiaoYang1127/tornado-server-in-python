@@ -43,7 +43,7 @@ if not "g_http_server" in globals():
     g_http_server = None
 
 
-def init_http_server(http_port=8080):
+def init_http_server(http_port=5088):
     global g_http_server
     if g_http_server:
         return
