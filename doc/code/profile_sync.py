@@ -1,4 +1,9 @@
-# encoding:utf-8
+#!/usr/bin/env/python
+# _*_coding:utf-8_*_
+
+import os
+import functools
+import datetime
 
 import tornado
 import tornado.gen
@@ -45,7 +50,7 @@ class AsyncTaskHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
         # yield 结果
         response = yield tornado.gen.Task(self.ping, ' www.google.com')
-        print 'response', response
+        print('response', response)
         self.finish('hello')
 
     @tornado.gen.coroutine
@@ -93,7 +98,7 @@ class FutureResponseHandler(tornado.web.RequestHandler):
         response = yield tornado.gen.with_timeout(datetime.timedelta(10), future, quiet_exceptions=tornado.gen.TimeoutError)
 
         if response:
-            print 'response', response.result()
+            print('response', response.result())
 
     @tornado.concurrent.run_on_executor
     def ping(self, url):

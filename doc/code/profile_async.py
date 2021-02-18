@@ -1,6 +1,8 @@
-# encoding:utf-8
+#!/usr/bin/env/python
+# _*_coding:utf-8_*_
 
 import requests
+
 import tornado
 import tornado.ioloop
 import tornado.web

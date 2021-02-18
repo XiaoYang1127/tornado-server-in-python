@@ -28,10 +28,10 @@ class CHttpServer(threading.Thread):
             self.m_http_server = tornado.httpserver.HTTPServer(self.make_app(), xheaders=True)
             self.m_http_server.listen(self.m_http_port)
             tornado.ioloop.IOLoop.instance().start()
-        except:
+        except Exception:
             try:
                 traceback.print_exc()
-            except:
+            except Exception:
                 pass
 
             pid = os.getpid()
@@ -39,7 +39,7 @@ class CHttpServer(threading.Thread):
 
 
 # 初始化
-if not "g_http_server" in globals():
+if "g_http_server" not in globals():
     g_http_server = None
 
 

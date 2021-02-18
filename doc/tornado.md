@@ -1,53 +1,57 @@
 # tornado server
 
-
 ## 1. 介绍
-* Tornado是一个用Python编写的异步HTTP服务器，同时也是一个web开发框架。
-* Tornado优秀的大并发处理能力得益于它的web server，从底层开始就自己实现了一整套基于epoll的单线程异步架构。
 
+- Tornado 是一个用 Python 编写的异步 HTTP 服务器，同时也是一个 web 开发框架。
+- Tornado 优秀的大并发处理能力得益于它的 web server，从底层开始就自己实现了一整套基于 epoll 的单线程异步架构。
 
 ## 2. 例子
 
-### 同步做法
-1. 对于同步阻塞型Web服务器，我们来打个比方，将它比作一间饭馆，而Web请求就是来这家饭馆里吃饭的客人。
-2. 假设饭馆店里只有20个座位，那么同时能够就餐的客人数也就是20，剩下的客人被迫就在店门外等，如果客人们吃的太慢了，那么外面的客人等得不耐烦了，就会走掉（timeout）。
-3. 假设你正在写一个需要请求一些来自其他服务器上的数据（比如数据库服务，调用其他http 接口获取数据）的应用程序，这几个请求假设需要花费5秒钟，如果这些代码运行在单个线程中，你的服务器只能每5秒接收一个客户端的请求。在这5秒钟的时间里，服务器不能干其他任何事情，所以，你的服务效率是每秒0.2个请求， 这样的效率时不能接受。
-4. 大部分服务器会使用多线程技术来让服务器一次接收多个客户端的请求，我们假设你有20个线程，你将在性能上获得20倍的提高，所以现在你的服务器效率是每秒接受4个请求，但这还是太低了。
+### 对于同步阻塞型 Web 服务器
 
-### 异步做法
-1. 对于异步非阻塞型服务器，我们打另一个比方，将它比作一家超市，客人们想进就能进，前往货架拿他们想要的货物，然后再去收银台结账（callback），
-2. 假设，这家超市只有20个收银台，却可以同时满足成百上千人的购物需求。和购物的时间长度比起来，结账的时间基本可以忽略不计。
-3. 当我们在等待结果的时候不阻塞，转而我们给框架一个回调函数作为参数，让框架在收到结果的时候通过回调函数继续操作。
+1. 我们来打个比方，将它比作一间饭馆，而 Web 请求就是来这家饭馆里吃饭的客人
+2. 假设饭馆店里只有 20 个座位，那么同时能够就餐的客人数也就是 20，剩下的客人被迫就在店门外等，如果客人们吃的太慢了，那么外面的客人等得不耐烦了，就会走掉（timeout）
+3. 假设你正请求一些来自其他服务器上的数据，假设请求需要花费 5 秒钟，如果运行在单个线程中，你的服务器只能每 5 秒接收一个客户端的请求
+4. 在这 5 秒钟的时间里，服务器不能干其他任何事情，所以，你的服务效率是每秒 0.2 个请求， 这样的效率时不能接受
+
+### 对于异步非阻塞型服务器
+
+1. 我们打另一个比方，将它比作一家超市，客人们想进就能进，前往货架拿他们想要的货物，然后再去收银台结账（callback）
+2. 假设，这家超市只有 20 个收银台，却可以同时满足成百上千人的购物需求。和购物的时间长度比起来，结账的时间基本可以忽略不计
+3. 当我们在等待结果的时候不阻塞，转而我们给框架一个回调函数作为参数，让框架在收到结果的时候通过回调函数继续操作
 4. 这样，服务器就可以被解放去接受其他客户端的请求了。
-
 
 ## 3. application
 
 ### 背景
-* Application本身不处理数据，只是封装URL, 解析请求的URL，分发到URL相对应的RequestHandler去执行具体操作
+
+- Application 本身不处理数据，只是封装 URL, 解析请求的 URL，分发到 URL 相对应的 RequestHandler 去执行具体操作
 
 ### 流程
-1. 在新建一个app的时候，根据设置好的URL和回调函数Handler封装成URLSpec对象
-2. 在请求到来，将HTTPServer封装好的HTTPRequest传入_RequestDispatcher对象，_RequestDispatcher对象根据传入的HTTPRequest使用URLSpec解析匹match正则匹配找到对应的RequestHandler，执行它的_execute方法
 
+1. 在新建一个 app 的时候，根据设置好的 URL 和回调函数 Handler 封装成 URLSpec 对象
+2. 在请求到来，将 HTTPServer 封装好的 HTTPRequest 传入\_RequestDispatcher 对象，\_RequestDispatcher 对象根据传入的 HTTPRequest 使用 URLSpec 解析匹 match 正则匹配找到对应的 RequestHandler，执行它的\_execute 方法
 
 ## 4. httpserver
 
 ### 介绍
-* TCPServer作为工厂类，自身只做统一的端口绑定、监听、回调函数绑定的操作
-* HTTPServer作为子类，实现数据接收类的创建，接受数据，最后封装成HTTPRequest对象，交给Application对象
-* 在整个接收数据的过程中，并不能分辨出url是什么，该匹配哪个handler， 这件事是由Application对象来处理的
+
+- TCPServer 作为工厂类，自身只做统一的端口绑定、监听、回调函数绑定的操作
+- HTTPServer 作为子类，实现数据接收类的创建，接受数据，最后封装成 HTTPRequest 对象，交给 Application 对象
+- 在整个接收数据的过程中，并不能分辨出 url 是什么，该匹配哪个 handler， 这件事是由 Application 对象来处理的
 
 ### 流程
-1. 把包含了各种配置信息的application对象封装到了HttpServer对象的request_callback 字段中，等待被调用
-2. TCPServer 通过listen方法启动端口监听， 封装_handle_connection回调函数，并注册到IOLoop中
-3. 当有请求到来时，注册在IOLoop中的 handle_connection 将会被调用，_handle_connection方法将会调用handle_stream方法
-4. handle_stream 方法是由HTTPServer重写TCPServer的方法，它将会创建HTTP1ServerConnection对象和ServerRequestAdapter对象并调用HTTP1ServerConnection对象的start_serving方法
-5. start_serving 方法创建创建HTTP1Connection对象，并在方法server_request_loop中异步yield conn.read_response(request_delegate),接受请求发过来的数据，这里传入的delegate就是在HTTPServer中创建的ServerRequestAdapter对象
-6. 在异步接收的时候，ServerRequestAdapter负责将数据封装成HTTPRequest对象， 接收完毕之后，调用ServerRequestAdapter的finish方法
-7. 在调用_ServerRequestAdapter的finish方法时，数据就会调用application对象的call方法，这时就回到了Application类了
+
+1. 把包含了各种配置信息的 application 对象封装到了 HttpServer 对象的 request_callback 字段中，等待被调用
+2. TCPServer 通过 listen 方法启动端口监听， 封装\_handle_connection 回调函数，并注册到 IOLoop 中
+3. 当有请求到来时，注册在 IOLoop 中的 handle_connection 将会被调用，\_handle_connection 方法将会调用 handle_stream 方法
+4. handle_stream 方法是由 HTTPServer 重写 TCPServer 的方法，它将会创建 HTTP1ServerConnection 对象和 ServerRequestAdapter 对象并调用 HTTP1ServerConnection 对象的 start_serving 方法
+5. start_serving 方法创建创建 HTTP1Connection 对象，并在方法 server_request_loop 中异步 yield conn.read_response(request_delegate),接受请求发过来的数据，这里传入的 delegate 就是在 HTTPServer 中创建的 ServerRequestAdapter 对象
+6. 在异步接收的时候，ServerRequestAdapter 负责将数据封装成 HTTPRequest 对象， 接收完毕之后，调用 ServerRequestAdapter 的 finish 方法
+7. 在调用\_ServerRequestAdapter 的 finish 方法时，数据就会调用 application 对象的 call 方法，这时就回到了 Application 类了
 
 ### 源码解析
+
 ```python
 class TCPServer(object)：
 
@@ -99,14 +103,16 @@ class HTTPServer(TCPServer, httputil.HTTPServerConnectionDelegate):
 ## 5. ioloop
 
 ### 介绍
-* 将TCPServer 注册到 IOLoop 的事件记到 _handlers 字段，同时注册 READ 和 ERROR 事件到 epoll
-* IOLoop 启动一个大循环，负责轮询epoll中是否已经有就绪的事件，如果有就执行对应的回调
-* 目前支持4中事件
+
+- 将 TCPServer 注册到 IOLoop 的事件记到 \_handlers 字段，同时注册 READ 和 ERROR 事件到 epoll
+- IOLoop 启动一个大循环，负责轮询 epoll 中是否已经有就绪的事件，如果有就执行对应的回调
+- 目前支持 4 种事件
 
 ### 立即事件
-* 场景：当前函数执行完后，下次ioloop调度时直接调度某函数
-* 用法：ioloop.add_callback(callback, *args, **kwargs)
-* 原理：立即事件全部存放在ioloop._callbacks中，ioloop每次循环都会调用这些立即事件的回调函数
+
+- 场景：当前函数执行完后，下次 ioloop 调度时直接调度某函数
+- 用法：ioloop.add_callback(callback, \*args, \*\*kwargs)
+- 原理：立即事件全部存放在 ioloop.\_callbacks 中，ioloop 每次循环都会调用这些立即事件的回调函数
 
 ```python
 def start(self):
@@ -146,9 +152,10 @@ def start(self):
 ```
 
 ### 定时器异步事件
-* 场景：用户希望在某一段时间后执行某函数
-* 用法：ioloop.call_at(when, callback, *args, **kwargs), ioloop.call_later(delay, callback, *args, **kwargs)
-* 原理：定时器事件存放在ioloop._timeouts中，ioloop每次循环开始都会找出所有已经超时的定时器，并调用对应的回调函数
+
+- 场景：用户希望在某一段时间后执行某函数
+- 用法：ioloop.call_at(when, callback, *args, \*\*kwargs), ioloop.call_later(delay, callback, *args, \*\*kwargs)
+- 原理：定时器事件存放在 ioloop.\_timeouts 中，ioloop 每次循环开始都会找出所有已经超时的定时器，并调用对应的回调函数
 
 ```python
 def start(self):
@@ -187,11 +194,12 @@ def start(self):
             handler_func(fd_obj, events)
 ```
 
-### IO异步事件
-* 场景：等待某个文件描述符的某个事件，如TCPserver等待socket的READ事件
-* 用法：ioloop.add_handler(fd, callback, events)
-* 原理：所有的文件描述符全部存放在ioloop._impl中，windows平台下_impl是tornado.platform.select.SelectIOLoop对象
-  在linux平台下_impl是tornado.platform.epoll.EPollIOLoop对象，作用都是同时监听多个文件描述符
+### IO 异步事件
+
+- 场景：等待某个文件描述符的某个事件，如 TCPserver 等待 socket 的 READ 事件
+- 用法：ioloop.add_handler(fd, callback, events)
+- 原理：所有的文件描述符全部存放在 ioloop.\_impl 中，windows 平台下\_impl 是 tornado.platform.select.SelectIOLoop 对象
+  在 linux 平台下\_impl 是 tornado.platform.epoll.EPollIOLoop 对象，作用都是同时监听多个文件描述符
 
 ```python
 def start(self):
@@ -230,10 +238,11 @@ def start(self):
             handler_func(fd_obj, events)  #循环调用所有文件描述符对应的回调函数
 ```
 
-### Future异步事件
-* 场景：等待某个异步事件结束后执行回掉函数
-* 用法：ioloop.add_future(future, callback)， future.add_done_callback(callback)
-* 原理：异步事件结束后调用Future.set_result()，当执行set_result时将future所有的回掉函数添加为ioloop的立即事件
+### Future 异步事件
+
+- 场景：等待某个异步事件结束后执行回掉函数
+- 用法：ioloop.add_future(future, callback)， future.add_done_callback(callback)
+- 原理：异步事件结束后调用 Future.set_result()，当执行 set_result 时将 future 所有的回掉函数添加为 ioloop 的立即事件
 
 ```python
 class Future(object):
@@ -252,4 +261,5 @@ class Future(object):
 ```
 
 ## 6. 流程图
+
 ![tornado 流程图](./pic/tornado-flow-chart.jpg)

@@ -7,6 +7,7 @@ import sys
 import traceback
 
 import httpserver.http_server
+import tests.start
 
 
 script_path = "script"
@@ -21,7 +22,7 @@ def base_init():
 def main():
     try:
         base_init()
-    except:
+    except Exception:
         traceback.print_exc()
 
     process()
@@ -32,5 +33,19 @@ def process():
         time.sleep(0.2)
 
 
-# if __name__ == "__main__":
-#     main()
+def test():
+    tests.start.do_unittest()
+
+
+if __name__ == "__main__":
+    argv = sys.argv
+    if len(argv) < 2:
+        print("pthon main.py main|test")
+        exit(0)
+
+    if argv[1] == "main":
+        main()
+    elif argv[1] == "test":
+        test()
+    else:
+        print("pthon main.py main|test")

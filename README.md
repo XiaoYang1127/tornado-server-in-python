@@ -19,18 +19,13 @@
 
 ## 4. 运行
 
-### windows
-
-- 双击 run_mine.exe
-
-### linux
-
-- ./run_mine
+- cd script
+- python main.py main
 
 ## 5. 用例测试
 
-- 测试用例在 script/tests 下，如有增加，修改 start.py 里面的 do_unittest 函数即可
-- 双击 run_unittest.exe，进行自动化测试
+- cd script
+- python main.py test
 
 ## 6. 其他
 
