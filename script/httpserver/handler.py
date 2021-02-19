@@ -15,7 +15,8 @@ class CRequestHandler(httpserver.base.CBaseHandler):
     HTTP_AUTH = "secret_key"
 
     def is_valid_request(self):
-        if self.request.method not in ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"]:
+        if self.request.method not in [
+                "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"]:
             self.simple_response(405)
             return 0
 
@@ -45,11 +46,13 @@ class CRequestHandler(httpserver.base.CBaseHandler):
                     for k, v in json_body.items():
                         self.m_query_params[k.lower()] = v
                 except Exception as e:
-                    self.simple_response(500, f"body json decoded fail {str(e)}")
+                    self.simple_response(
+                        500, f"body json decoded fail {str(e)}")
                     return
             else:
                 for key in self.request.body_arguments.keys():
-                    self.m_query_params[key.lower()] = self.get_body_argument(key)
+                    self.m_query_params[key.lower(
+                    )] = self.get_body_argument(key)
 
                 self.check_save_file()
 

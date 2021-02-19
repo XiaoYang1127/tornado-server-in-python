@@ -8,6 +8,7 @@ import traceback
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+from tornado.log import access_log
 
 import httpserver.application
 
@@ -20,12 +21,17 @@ class CHttpServer(threading.Thread):
         self.m_http_server = None
 
     def make_app(self):
-        return tornado.web.Application(httpserver.application.HANDLERS)
+        return tornado.web.Application(
+            httpserver.application.HANDLERS,
+            log_function=self.LogRequest
+        )
 
     def run(self):
         try:
-            print("HTTP_SERVER started，http_port:%d" % self.m_http_port)
-            self.m_http_server = tornado.httpserver.HTTPServer(self.make_app(), xheaders=True)
+            access_log.info("HTTP_SERVER started，http_port:%d" %
+                            self.m_http_port)
+            self.m_http_server = tornado.httpserver.HTTPServer(
+                self.make_app(), xheaders=True)
             self.m_http_server.listen(self.m_http_port)
             tornado.ioloop.IOLoop.instance().start()
         except Exception:
@@ -36,6 +42,13 @@ class CHttpServer(threading.Thread):
 
             pid = os.getpid()
             os.kill(pid, 15)
+
+    def LogRequest(self, handler):
+        request_time = 1000.0 * handler.request.request_time()
+        access_log.info("%d %s %.2fms" %
+                        (handler.get_status(),
+                         handler.request_summary(),
+                         request_time))
 
 
 # 初始化

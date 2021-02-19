@@ -1,6 +1,8 @@
 #!/usr/local/env python
 # _*_ coding:utf-8 _*_
 
+from tornado.log import access_log
+
 import threading
 import requests
 
@@ -51,11 +53,13 @@ class CHttpClient(threading.Thread):
         """
         while self.m_retry:
             try:
-                response = requests.request(self.m_method, self.m_url, **self.m_kwargs)
+                response = requests.request(
+                    self.m_method, self.m_url, **self.m_kwargs)
                 self.m_result = True
                 self.m_content = response.json()
             except Exception as e:
-                print("%s.run requst failed err_msg:%s" % (self.__class__.__name__, str(e)))
+                access_log.error("%s.run requst failed err_msg:%s" %
+                                 (self.__class__.__name__, str(e)))
             finally:
                 self.m_retry -= 1
 
@@ -63,6 +67,8 @@ class CHttpClient(threading.Thread):
 
     def finish(self):
         if not self.m_result:
-            print("%s.finish failed url:%s content:%s" % (self.__class__.__name__, self.m_url, self.m_content))
+            access_log.error(
+                "%s.finish failed url:%s content:%s" %
+                (self.__class__.__name__, self.m_url, self.m_content))
 
         self.callback(self.m_result, self.m_content)

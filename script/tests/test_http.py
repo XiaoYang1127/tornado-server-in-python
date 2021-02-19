@@ -27,7 +27,8 @@ def test_post():
         "b": "A",
         "hello": "中国"
     }
-    http_client.http_request("post", url, headers=headers, json=post_data, callback=test_post_back)
+    http_client.http_request("post", url, headers=headers, json=post_data,
+                             callback=test_post_back)
 
 
 def test_post_back(result, data):
@@ -44,7 +45,8 @@ def test_get():
         "content-type": "application/json",
         "secret_key": "secret_key",
     }
-    http_client.http_request("get", url, headers=headers, callback=test_get_back)
+    http_client.http_request(
+        "get", url, headers=headers, callback=test_get_back)
 
 
 def test_get_back(result, data):

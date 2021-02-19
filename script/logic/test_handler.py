@@ -10,7 +10,7 @@ class CTestHandler(httpserver.handler.CRequestHandler):
         response_data = {
             "status_code": 200,
             "message": "success",
-            "payload": self.m_query_params,
+            "payload": self.get_query_params(),
         }
         self.response_to_web(response_data)
 
@@ -18,7 +18,7 @@ class CTestHandler(httpserver.handler.CRequestHandler):
         response_data = {
             "status_code": 200,
             "message": "success",
-            "payload": self.m_query_params,
+            "payload": self.get_query_params(),
         }
         self.response_to_web(response_data)
 
@@ -26,7 +26,7 @@ class CTestHandler(httpserver.handler.CRequestHandler):
         response_data = {
             "status_code": 200,
             "message": "success",
-            "payload": self.m_query_params,
+            "payload": self.get_query_params(),
         }
         self.response_to_web(response_data)
 
@@ -34,7 +34,7 @@ class CTestHandler(httpserver.handler.CRequestHandler):
         response_data = {
             "status_code": 200,
             "message": "success",
-            "payload": self.m_query_params,
+            "payload": self.get_query_params(),
         }
         self.response_to_web(response_data)
 
@@ -42,6 +42,6 @@ class CTestHandler(httpserver.handler.CRequestHandler):
         response_data = {
             "status_code": 200,
             "message": "success",
-            "payload": self.m_query_params,
+            "payload": self.get_query_params(),
         }
         self.response_to_web(response_data)
