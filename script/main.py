@@ -19,6 +19,8 @@ if script_path not in sys.path:
 
 def init_log():
     '''
+    Tornado uses three logger streams:
+
     - tornado.access: Per-request logging for Tornado's HTTP servers (and
         potentially other servers in the future)
     - tornado.application: Logging of errors from application code (i.e.
@@ -32,7 +34,7 @@ def init_log():
     define('log_rotate_when', default='midnight')
     define('log_file_num_backups', default=90)
     define('log_rotate_interval', default=1)
-    # define('logging', default="debug") # already define "log"
+    # define('logging', default="debug")  # already define "log"
     define('log_to_stderr', default=True)
     parse_command_line()
 

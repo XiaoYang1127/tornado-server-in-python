@@ -47,6 +47,10 @@ class CBaseHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
     def get(self, *args, **kwargs):
+        """
+        使用asynchronous decorator，它主要设置_auto_finish为false，
+        这样handler的get函数返回的时候tornado就不会关闭与client的连接
+        """
         self.do_get(*args, **kwargs)
 
     def do_get(self, *args, **kwargs):
