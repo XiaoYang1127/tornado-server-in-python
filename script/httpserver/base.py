@@ -8,6 +8,7 @@ import urllib
 
 import tornado.gen
 import tornado.ioloop
+import tornado.web
 
 
 class CBaseHandler(tornado.web.RequestHandler):
@@ -51,7 +52,8 @@ class CBaseHandler(tornado.web.RequestHandler):
         使用asynchronous decorator，它主要设置_auto_finish为false，
         这样handler的get函数返回的时候tornado就不会关闭与client的连接
         """
-        self.do_get(*args, **kwargs)
+        # self.do_get(*args, **kwargs)
+        self.ioloop().add_callback(self.do_get, *args, **kwargs)
 
     def do_get(self, *args, **kwargs):
         self.simple_response(405)
