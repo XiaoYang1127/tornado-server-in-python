@@ -11,6 +11,7 @@ class CTestHandler(httpserver.handler.CRequestHandler):
             "status_code": 200,
             "message": "success",
             "payload": self.get_query_params(),
+            "in_test": "in_test",
         }
         self.response_to_web(response_data)
 

@@ -55,7 +55,7 @@ def main():
 
 def process():
     while True:
-        time.sleep(0.2)
+        time.sleep(0.001)
 
 
 def test():

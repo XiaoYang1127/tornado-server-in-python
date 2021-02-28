@@ -3,22 +3,25 @@
 
 import json
 import time
-import functools
 import urllib
+from functools import partial
 
+from concurrent.futures import ThreadPoolExecutor
 import tornado.gen
 import tornado.ioloop
 import tornado.web
+from tornado.concurrent import run_on_executor
 
 
 class CBaseHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(10)
 
     def __init__(self, application, request, **kwargs):
         tornado.web.RequestHandler.__init__(
             self, application, request, **kwargs)
         self.m_query_params = {}
         self.__timeout = self.ioloop().add_timeout(
-            int(time.time()) + 30, functools.partial(self.simple_response, 408))
+            int(time.time()) + 30, partial(self.simple_response, 408))
 
     def ioloop(self):
         return tornado.ioloop.IOLoop.instance()
@@ -47,16 +50,28 @@ class CBaseHandler(tornado.web.RequestHandler):
         self.simple_response(405)
 
     @tornado.web.asynchronous
+    # @tornado.gen.coroutine
     def get(self, *args, **kwargs):
         """
         使用asynchronous decorator，它主要设置_auto_finish为false，
         这样handler的get函数返回的时候tornado就不会关闭与client的连接
         """
-        # self.do_get(*args, **kwargs)
-        self.ioloop().add_callback(self.do_get, *args, **kwargs)
+        # one
+        # self.on_get(*args, **kwargs)
 
-    def do_get(self, *args, **kwargs):
-        self.simple_response(405)
+        # two
+        self.ioloop().add_callback(self.on_get, *args, **kwargs)
+
+        # three
+        # yield tornado.gen.Task(self.on_get, *args, **kwargs)
+
+        # four
+        # self.ioloop().call_later(0.001, callback=self.on_get)
+
+    # @tornado.gen.coroutine
+    @run_on_executor
+    def on_get(self, *args, **kwargs):
+        self.do_get(*args, **kwargs)
 
     @tornado.web.asynchronous
     def post(self, *args, **kwargs):
