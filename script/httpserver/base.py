@@ -75,10 +75,14 @@ class CBaseHandler(tornado.web.RequestHandler):
 
     @tornado.web.asynchronous
     def post(self, *args, **kwargs):
-        self.do_post(*args, **kwargs)
+        self.on_post(*args, callback=self.on_post_back)
 
-    def do_post(self, *args, **kwargs):
-        self.simple_response(405)
+    @tornado.gen.coroutine
+    def on_post(self, *args, **kwargs):
+        return self.do_post(*args, **kwargs)
+
+    def on_post_back(self, *args):
+        print(">>>>> %s" % args)
 
     @tornado.web.asynchronous
     def delete(self, *args, **kwargs):

@@ -23,7 +23,8 @@ class CHttpServer(threading.Thread):
     def make_app(self):
         return tornado.web.Application(
             httpserver.application.HANDLERS,
-            log_function=self.LogRequest
+            log_function=self.LogRequest,
+            autoreload=True,
         )
 
     def run(self):
