@@ -30,7 +30,6 @@ class AsyncHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
         tornado.ioloop.IOLoop.instance().add_timeout(
             1, callback=functools.partial(self.ping, 'www.google.com'))
-        # do something others
         self.finish('It works')
 
     @tornado.gen.coroutine
@@ -48,10 +47,8 @@ class AsyncTaskHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
     def get(self, *args, **kwargs):
-        # yield 结果
         response = yield tornado.gen.Task(self.ping, ' www.google.com')
-        print('response', response)
-        self.finish('hello')
+        self.finish(response)
 
     @tornado.gen.coroutine
     def ping(self, url):
@@ -69,11 +66,11 @@ class FutureHandler(tornado.web.RequestHandler):
     def get(self, *args, **kwargs):
         url = 'www.google.com'
         tornado.ioloop.IOLoop.instance().add_callback(functools.partial(self.ping, url))
-        self.finish('It works')
 
     @tornado.concurrent.run_on_executor
     def ping(self, url):
         os.system("ping -c 2 {}".format(url))
+        self.finish('It works')
 
 
 # 异步4
@@ -94,9 +91,7 @@ class FutureResponseHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def get(self, *args, **kwargs):
         future = Executor().submit(self.ping, 'www.google.com')
-
         response = yield tornado.gen.with_timeout(datetime.timedelta(10), future, quiet_exceptions=tornado.gen.TimeoutError)
-
         if response:
             print('response', response.result())
 

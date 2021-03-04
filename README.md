@@ -26,7 +26,3 @@
 
 - cd script
 - python main.py test
-
-## 6. 其他
-
-- 如有疑问，提交 issues，定期回复

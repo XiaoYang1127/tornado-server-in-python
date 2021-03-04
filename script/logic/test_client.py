@@ -7,6 +7,10 @@ import httpserver.handler
 class CTestClientHandler(httpserver.handler.CRequestHandler):
 
     def do_get(self, *args, **kwargs):
+        """
+        - 提供callback函数，这样当fetch http请求完成的时候才会去调用on_response，而不会阻塞
+        - on_response调用完成之后通过finish结束与client的连接
+        """
         params = self.get_query_params()
         method = params.get("method", "GET")
         url = params.get("url", "http://www.baidu.com")

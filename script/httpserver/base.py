@@ -6,15 +6,15 @@ import time
 import urllib
 from functools import partial
 
-from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures
+import tornado.concurrent
 import tornado.gen
 import tornado.ioloop
 import tornado.web
-from tornado.concurrent import run_on_executor
 
 
 class CBaseHandler(tornado.web.RequestHandler):
-    executor = ThreadPoolExecutor(10)
+    executor = concurrent.futures.ThreadPoolExecutor(10)
 
     def __init__(self, application, request, **kwargs):
         tornado.web.RequestHandler.__init__(
@@ -68,10 +68,13 @@ class CBaseHandler(tornado.web.RequestHandler):
         # four
         # self.ioloop().call_later(0.001, callback=self.on_get)
 
-    # @tornado.gen.coroutine
-    @run_on_executor
+    @tornado.gen.coroutine
+    @tornado.concurrent.run_on_executor
     def on_get(self, *args, **kwargs):
         self.do_get(*args, **kwargs)
+
+    def do_get(self, *args, **kwargs):
+        self.simple_response(405)
 
     @tornado.web.asynchronous
     def post(self, *args, **kwargs):
