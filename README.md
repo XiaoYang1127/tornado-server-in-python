@@ -26,3 +26,7 @@
 
 - cd script
 - python main.py test
+
+## 6. 异步方案
+
+- 查看代码示例`script/logic/test_**.py`

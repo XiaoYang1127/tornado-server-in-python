@@ -8,10 +8,10 @@ import requests
 
 
 def http_request(method, url, callback=None, **kwargs):
-    hc = CHttpClient(method, url, **kwargs)
+    client = CHttpClient(method, url, **kwargs)
     if callback:
-        hc.set_callback(callback)
-    hc.start()
+        client.set_callback(callback)
+    client.start()
 
 
 class CHttpClient(threading.Thread):

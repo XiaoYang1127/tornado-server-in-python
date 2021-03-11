@@ -50,42 +50,29 @@ class CBaseHandler(tornado.web.RequestHandler):
         self.simple_response(405)
 
     @tornado.web.asynchronous
-    # @tornado.gen.coroutine
     def get(self, *args, **kwargs):
-        """
-        使用asynchronous decorator，它主要设置_auto_finish为false，
-        这样handler的get函数返回的时候tornado就不会关闭与client的连接
-        """
         # one
-        # self.on_get(*args, **kwargs)
+        # self.do_get(*args, **kwargs)
 
         # two
-        self.ioloop().add_callback(self.on_get, *args, **kwargs)
+        # this method is thread-safy
+        self.ioloop().add_callback(self.do_get, *args, **kwargs)
 
         # three
-        # yield tornado.gen.Task(self.on_get, *args, **kwargs)
+        # yield tornado.gen.Task(self.do_get, *args, **kwargs)
 
         # four
-        # self.ioloop().call_later(0.001, callback=self.on_get)
-
-    @tornado.gen.coroutine
-    @tornado.concurrent.run_on_executor
-    def on_get(self, *args, **kwargs):
-        self.do_get(*args, **kwargs)
+        # self.ioloop().call_later(0.001, callback=self.do_get)
 
     def do_get(self, *args, **kwargs):
         self.simple_response(405)
 
     @tornado.web.asynchronous
     def post(self, *args, **kwargs):
-        self.on_post(*args, callback=self.on_post_back)
+        self.do_post(*args, callback=self.on_post_back)
 
-    @tornado.gen.coroutine
-    def on_post(self, *args, **kwargs):
-        return self.do_post(*args, **kwargs)
-
-    def on_post_back(self, *args):
-        print(">>>>> %s" % args)
+    def do_post(self, *args, **kwargs):
+        self.simple_response(405)
 
     @tornado.web.asynchronous
     def delete(self, *args, **kwargs):
